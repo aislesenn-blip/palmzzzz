@@ -30,7 +30,7 @@ export default function Home() {
             Everything you are. <br/> In one link.
           </h1>
           <p className="text-white/80 text-base md:text-xl font-medium max-w-lg mx-auto mb-8 leading-relaxed">
-            The premium storefront for creators, retailers, and visionaries. No website needed. Just your vibe.
+            The premium storefront for creators, retailers, and visionaries. No website needed. Just your style.
           </p>
           <Link href="/vision" className="px-8 py-4 rounded-full bg-[#D2E823] text-[#153308] font-bold text-lg hover:bg-white transition flex items-center gap-2 inline-flex shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
              Claim your Link <ArrowRight size={20}/>
