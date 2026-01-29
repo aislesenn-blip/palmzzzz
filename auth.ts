@@ -28,11 +28,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 email: 'ceo@palmtweets.com',
                 handle: 'CEO',
                 image: null,
+                planStatus: 'pro',
             };
         }
 
         // Regular Logic
-        // Determine if username is email or handle
         let user;
         if (username.includes('@')) {
             user = await db.query.users.findFirst({ where: eq(users.email, username) });

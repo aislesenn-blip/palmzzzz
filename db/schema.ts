@@ -11,6 +11,10 @@ export const users = sqliteTable('users', {
   bio: text('bio'),
   isPro: integer('is_pro', { mode: 'boolean' }).default(false).notNull(),
   planStatus: text('plan_status', { enum: ['free', 'pro'] }).default('free').notNull(),
+  persona: text('persona', { enum: ['business', 'service'] }),
+  template: text('template', { enum: ['Muse', 'Titan', 'Studio'] }).default('Muse'),
+  inviteCodeUsed: text('invite_code_used'),
+  invitesRemaining: integer('invites_remaining').default(3).notNull(),
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
@@ -37,4 +41,12 @@ export const reviews = sqliteTable('reviews', {
 export const invites = sqliteTable('invites', {
   code: text('code').primaryKey(),
   isUsed: integer('is_used', { mode: 'boolean' }).default(false).notNull(),
+  generatedBy: text('generated_by').references(() => users.id),
+});
+
+export const trafficInjections = sqliteTable('traffic_injections', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  sourceHandle: text('source_handle').notNull(),
+  targetHandle: text('target_handle').notNull(),
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 });

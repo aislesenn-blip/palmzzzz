@@ -26,6 +26,7 @@ export const authConfig = {
         if (user) {
             token.id = user.id;
             token.handle = (user as any).handle;
+            token.plan = (user as any).planStatus;
         }
         return token;
     },
@@ -33,6 +34,7 @@ export const authConfig = {
         if (session.user) {
             session.user.id = token.id as string;
             (session.user as any).handle = token.handle as string;
+            (session.user as any).plan = token.plan as string;
         }
         return session;
     }

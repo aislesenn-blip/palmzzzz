@@ -1,14 +1,15 @@
 import { db } from "@/lib/db";
-import { users } from "@/db/schema";
-import { count } from "drizzle-orm";
+import { users, trafficInjections } from "@/db/schema";
+import { count, eq } from "drizzle-orm";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = 'force-dynamic';
 
-type User = typeof users.$inferSelect;
-
 export default async function AdminDashboard() {
     let userCount = 0;
-    let allUsers: User[] = [];
+    let allUsers = [];
 
     try {
         const userCountRes = await db.select({ count: count() }).from(users);
@@ -18,34 +19,69 @@ export default async function AdminDashboard() {
         allUsers = await db.select().from(users);
     } catch (e) {
         console.error("DB Error:", e);
-        // Fallback for build time if DB is not reachable or tables missing
+    }
+
+    async function injectTraffic(formData: FormData) {
+        "use server";
+        const source = formData.get('source') as string;
+        const target = formData.get('target') as string;
+        await db.insert(trafficInjections).values({ sourceHandle: source, targetHandle: target });
+        revalidatePath('/admin/dashboard');
+    }
+
+    async function toggleBan(userId: string, currentStatus: string) {
+        "use server";
+        console.log("Ban toggle", userId);
     }
 
     return (
         <div className="min-h-screen bg-gray-100 p-8 font-sans">
-            <h1 className="text-4xl font-extrabold mb-8">Empire Command.</h1>
-            <div className="bg-white p-8 rounded-3xl shadow-sm mb-8 max-w-sm">
-                <h3 className="text-gray-400 font-bold uppercase text-xs tracking-widest">Total Citizens</h3>
-                <p className="text-6xl font-black mt-2">{userCount}</p>
+            <h1 className="text-4xl font-extrabold mb-8 text-charcoal">God Mode.</h1>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                <div className="bg-white p-8 rounded-3xl shadow-sm">
+                    <h3 className="text-gray-400 font-bold uppercase text-xs tracking-widest">Total Citizens</h3>
+                    <p className="text-6xl font-black mt-2 text-charcoal">{userCount}</p>
+                </div>
+
+                <div className="bg-charcoal text-white p-8 rounded-3xl shadow-lg">
+                    <h3 className="text-gray-400 font-bold uppercase text-xs tracking-widest mb-4">Traffic Injection</h3>
+                    <form action={injectTraffic} className="flex gap-4 items-end">
+                        <div className="flex-1">
+                            <label className="text-xs font-bold mb-1 block">Source Handle</label>
+                            <input name="source" className="w-full bg-gray-800 border border-gray-700 rounded-lg p-2" placeholder="newbie" />
+                        </div>
+                        <div className="text-2xl mb-2">→</div>
+                        <div className="flex-1">
+                            <label className="text-xs font-bold mb-1 block">Target Handle</label>
+                            <input name="target" className="w-full bg-gray-800 border border-gray-700 rounded-lg p-2" placeholder="vip_user" />
+                        </div>
+                        <Button type="submit" className="bg-lime text-black hover:bg-white">Connect</Button>
+                    </form>
+                </div>
             </div>
 
-            <div className="bg-white rounded-3xl overflow-hidden shadow-sm">
+            <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-200">
                 <table className="w-full text-left">
                     <thead className="bg-gray-50 border-b border-gray-100">
                         <tr>
                             <th className="p-4 font-bold text-xs uppercase text-gray-400">Handle</th>
                             <th className="p-4 font-bold text-xs uppercase text-gray-400">Email</th>
                             <th className="p-4 font-bold text-xs uppercase text-gray-400">Plan</th>
-                            <th className="p-4 font-bold text-xs uppercase text-gray-400">WhatsApp</th>
+                            <th className="p-4 font-bold text-xs uppercase text-gray-400">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {allUsers.map((u) => (
+                        {allUsers.map((u: any) => (
                             <tr key={u.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
                                 <td className="p-4 font-bold">@{u.handle}</td>
                                 <td className="p-4 text-gray-500">{u.email}</td>
-                                <td className="p-4"><span className="bg-black text-white text-xs font-bold px-2 py-1 rounded">{u.planStatus}</span></td>
-                                <td className="p-4 text-gray-500 font-mono text-xs">{u.whatsappNumber}</td>
+                                <td className="p-4"><span className={`text-xs font-bold px-2 py-1 rounded ${u.planStatus === 'pro' ? 'bg-black text-white' : 'bg-gray-100 text-gray-500'}`}>{u.planStatus.toUpperCase()}</span></td>
+                                <td className="p-4 flex gap-2">
+                                    <form action={toggleBan.bind(null, u.id, 'active')}>
+                                        <button className="text-red-500 font-bold text-xs hover:underline">BAN</button>
+                                    </form>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
