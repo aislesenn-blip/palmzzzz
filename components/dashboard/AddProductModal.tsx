@@ -5,25 +5,28 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { createProduct } from "@/app/actions";
 
-export default function AddProductModal() {
+export default function AddProductModal({ userPlan, productCount }: { userPlan: string, productCount: number }) {
     const [isOpen, setIsOpen] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [imageUrl, setImageUrl] = useState("");
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (userPlan === 'free' && productCount >= 10) {
+            alert("Upgrade to Pro to add more products.");
+            return;
+        }
+
         const file = e.target.files?.[0];
         if (!file) return;
 
         setUploading(true);
         try {
-            // 1. Get presigned URL
             const res = await fetch("/api/upload", {
                 method: "POST",
                 body: JSON.stringify({ filename: file.name, contentType: file.type }),
             });
             const { uploadUrl, publicUrl } = await res.json();
 
-            // 2. Upload to R2
             await fetch(uploadUrl, {
                 method: "PUT",
                 body: file,
@@ -39,40 +42,50 @@ export default function AddProductModal() {
         }
     };
 
-    if (!isOpen) return <Button onClick={() => setIsOpen(true)}>+ Add Product</Button>;
+    if (!isOpen) return <Button onClick={() => setIsOpen(true)}>+ New Drop</Button>;
 
     return (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white p-8 rounded-3xl w-full max-w-lg">
-                <h2 className="text-2xl font-bold mb-6">New Drop</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
+            <div className="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl scale-100 animate-in zoom-in-95 duration-200">
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-serif font-bold">New Product Drop</h2>
+                    <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-black">✕</button>
+                </div>
+
                 <form action={async (formData) => {
                     await createProduct(formData);
                     setIsOpen(false);
-                }} className="space-y-4">
-                    <Input name="title" placeholder="Product Name" required />
-                    <Input name="price" type="number" placeholder="Price (USD)" required />
-                    <textarea
-                        name="description"
-                        placeholder="Description"
-                        className="w-full p-4 bg-gray-50 rounded-xl border border-gray-100"
-                        rows={3}
-                    />
-
-                    <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center">
+                    setImageUrl("");
+                }} className="space-y-6">
+                    <div className="border-2 border-dashed border-gray-200 rounded-2xl p-8 text-center hover:bg-gray-50 transition-colors cursor-pointer relative group">
+                        <input type="file" onChange={handleFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" />
                         {imageUrl ? (
-                            <img src={imageUrl} className="h-32 mx-auto object-cover rounded-lg" />
+                            <img src={imageUrl} className="h-40 mx-auto object-cover rounded-lg shadow-sm" />
                         ) : (
-                            <label className="cursor-pointer block">
-                                <span className="text-gray-400 font-bold">{uploading ? "Uploading..." : "Upload Image"}</span>
-                                <input type="file" onChange={handleFileChange} className="hidden" accept="image/*" />
-                            </label>
+                            <div className="space-y-2">
+                                <span className="text-4xl block">☁️</span>
+                                <span className="text-gray-400 font-bold block">{uploading ? "Uploading..." : "Drop Image Here"}</span>
+                            </div>
                         )}
                         <input type="hidden" name="imageUrl" value={imageUrl} required />
                     </div>
 
-                    <div className="flex gap-4 mt-6">
+                    <Input name="title" placeholder="Product Name" required />
+                    <div className="relative">
+                        <span className="absolute left-4 top-4 text-gray-400 font-bold">$</span>
+                        <input name="price" type="number" placeholder="Price" className="w-full p-4 pl-8 bg-white border-2 border-gray-100 rounded-xl focus:border-black outline-none font-bold text-lg" required />
+                    </div>
+
+                    <textarea
+                        name="description"
+                        placeholder="Description (Tell the story...)"
+                        className="w-full p-4 bg-white border-2 border-gray-100 rounded-xl focus:border-black outline-none transition-colors resize-none"
+                        rows={4}
+                    />
+
+                    <div className="flex gap-4 pt-2">
                         <Button className="flex-1 bg-gray-100 text-black hover:bg-gray-200" onClick={() => setIsOpen(false)}>Cancel</Button>
-                        <Button type="submit" className="flex-1" disabled={!imageUrl || uploading}>Launch</Button>
+                        <Button type="submit" className="flex-1 bg-electric" disabled={!imageUrl || uploading}>Launch Product</Button>
                     </div>
                 </form>
             </div>
