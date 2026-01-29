@@ -15,9 +15,10 @@ const config: Config = {
         forest: '#153308',
         cream: '#F3F3F1',
         charcoal: '#1E2330',
+        grey: '#F3F3F1', // Off-white alias
       },
       fontFamily: {
-        serif: ['serif'], // Placeholder for Recoil/Cooper
+        serif: ['serif'], // Placeholder for Fraunces
         sans: ['var(--font-geist-sans)', 'sans-serif'],
       },
     },
