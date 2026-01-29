@@ -8,22 +8,31 @@ import { Instagram, Globe, Mail } from "lucide-react";
 
 export default async function Storefront({ params }: { params: Promise<{ handle: string }> }) {
     const { handle } = await params;
-    const user = await db.query.users.findFirst({ where: eq(users.handle, handle) });
-    if (!user) return notFound();
 
-    const userProducts = await db.select().from(products).where(eq(products.userId, user.id)).orderBy(desc(products.createdAt));
-
-    // Traffic Injection Logic
+    let user;
+    let userProducts = [];
     let injectedProducts = [];
-    const injection = await db.query.trafficInjections.findFirst({ where: eq(trafficInjections.sourceHandle, handle) });
-    if (injection) {
-        const targetUser = await db.query.users.findFirst({ where: eq(users.handle, injection.targetHandle) });
-        if (targetUser) {
-            injectedProducts = await db.select().from(products).where(eq(products.userId, targetUser.id)).limit(4);
+
+    try {
+        user = await db.query.users.findFirst({ where: eq(users.handle, handle) });
+        if (!user) return notFound();
+
+        userProducts = await db.select().from(products).where(eq(products.userId, user.id)).orderBy(desc(products.createdAt));
+
+        // Traffic Injection Logic
+        const injection = await db.query.trafficInjections.findFirst({ where: eq(trafficInjections.sourceHandle, handle) });
+        if (injection) {
+            const targetUser = await db.query.users.findFirst({ where: eq(users.handle, injection.targetHandle) });
+            if (targetUser) {
+                injectedProducts = await db.select().from(products).where(eq(products.userId, targetUser.id)).limit(4);
+            }
+        } else {
+            // Fallback: Random user products
+            injectedProducts = await db.select().from(products).orderBy(desc(products.views)).limit(4);
         }
-    } else {
-        // Fallback: Random user products
-        injectedProducts = await db.select().from(products).orderBy(desc(products.views)).limit(4);
+    } catch (error) {
+        console.error("Storefront Error:", error);
+        return notFound();
     }
 
     return (
