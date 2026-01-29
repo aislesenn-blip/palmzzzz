@@ -9,7 +9,7 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
-      const isOnAdmin = nextUrl.pathname.startsWith('/admin') && nextUrl.pathname !== '/admin/login';
+      const isOnAdmin = nextUrl.pathname.startsWith('/admin');
 
       if (isOnAdmin) {
         if (isLoggedIn && (auth.user as any).handle === 'CEO') return true;

@@ -2,10 +2,10 @@ import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 
 export const users = sqliteTable('users', {
-  id: text('id').primaryKey(), // UUID
+  id: text('id').primaryKey(),
   handle: text('handle').notNull().unique(),
   email: text('email').notNull().unique(),
-  password: text('password').notNull(), // Hashed
+  password: text('password').notNull(),
   whatsappNumber: text('whatsapp_number').notNull(),
   avatarUrl: text('avatar_url'),
   bio: text('bio'),
@@ -34,7 +34,7 @@ export const products = sqliteTable('products', {
 export const reviews = sqliteTable('reviews', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   productId: integer('product_id').references(() => products.id).notNull(),
-  rating: integer('rating').notNull(), // 1-5
+  rating: integer('rating').notNull(),
   comment: text('comment'),
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 });

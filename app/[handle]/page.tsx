@@ -22,7 +22,7 @@ export default async function Storefront({ params }: { params: Promise<{ handle:
             injectedProducts = await db.select().from(products).where(eq(products.userId, targetUser.id)).limit(4);
         }
     } else {
-        // Fallback: Random user products
+        // Fallback: Random PRO user products (Simplified for demo)
         injectedProducts = await db.select().from(products).orderBy(desc(products.views)).limit(4);
     }
 

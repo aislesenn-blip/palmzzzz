@@ -14,11 +14,11 @@ const config: Config = {
         pink: '#E9C0E9',
         forest: '#153308',
         cream: '#F3F3F1',
-        charcoal: '#1E2330',
-        grey: '#F3F3F1', // Off-white alias
+        grey: '#F3F3F1',
+        charcoal: '#1E2330', // Not strictly requested but useful for text
       },
       fontFamily: {
-        serif: ['serif'], // Placeholder for Fraunces
+        serif: ['serif'], // Placeholder for Recoil/Fraunces
         sans: ['var(--font-geist-sans)', 'sans-serif'],
       },
     },
