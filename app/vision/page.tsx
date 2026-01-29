@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
 
 export default function VisionPage() {
     return (
         <div className="min-h-screen bg-white flex flex-col md:flex-row font-sans">
-            <div className="w-full md:w-1/2 p-12 flex flex-col justify-center">
+            <div className="w-full md:w-1/2 p-12 flex flex-col justify-center bg-white">
                 <h1 className="text-6xl font-serif font-black mb-6 text-black leading-tight">Welcome to the <br/> 1% Family.</h1>
                 <p className="text-xl text-gray-600 mb-12 font-medium leading-relaxed max-w-lg">
                     TweetStore is a mini-site engine built to increase your conversion rate. We verify members to maintain quality.

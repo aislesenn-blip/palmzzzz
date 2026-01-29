@@ -14,6 +14,7 @@ const config: Config = {
         pink: '#E9C0E9',
         forest: '#153308',
         cream: '#F3F3F1',
+        grey: '#F3F4F6',
       },
       fontFamily: {
         serif: ['var(--font-fraunces)', 'serif'],

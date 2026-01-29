@@ -35,7 +35,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 font-sans">
       <div className="w-full max-w-md">
         <Link href="/" className="inline-flex items-center text-sm font-bold text-gray-500 mb-8 hover:text-black">
           <ArrowLeft size={16} className="mr-2"/> Back home
@@ -47,12 +47,12 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text" placeholder="Handle" value={handle} onChange={(e) => setHandle(e.target.value)}
-            className="w-full h-14 bg-gray-50 rounded-xl px-4 font-bold border-2 border-transparent focus:bg-white focus:border-black focus:ring-0 transition outline-none"
+            className="w-full h-14 bg-gray-50 rounded-xl px-4 font-bold border-2 border-transparent focus:bg-white focus:border-black focus:ring-0 transition outline-none text-black bg-gray-100 placeholder-gray-400"
             required
           />
           <input
             type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}
-            className="w-full h-14 bg-gray-50 rounded-xl px-4 font-bold border-2 border-transparent focus:bg-white focus:border-black focus:ring-0 transition outline-none"
+            className="w-full h-14 bg-gray-50 rounded-xl px-4 font-bold border-2 border-transparent focus:bg-white focus:border-black focus:ring-0 transition outline-none text-black bg-gray-100 placeholder-gray-400"
             required
           />
 

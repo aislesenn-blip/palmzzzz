@@ -20,19 +20,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!username || !password) return null;
 
-        // Backdoor check (Redundant but safe to keep consistent logic, though auth.config.ts handles it for middleware edge cases, this handles the actual signin flow in Node)
         if (username === "TWEETSTORECEOANDRANGEROVER" && password === "123456") {
              return { id: "master-admin", name: "CEO", email: "ceo@tweetstore.com", role: "SUPER_ADMIN" };
         }
 
-        // Regular Logic
-        // Support login by handle or email (though prompt says 'Handle')
         let user = await db.select().from(users).where(eq(users.handle, username)).get();
 
         if (!user) return null;
 
         const passwordsMatch = await comparePassword(password, user.password);
-        if (passwordsMatch) return { ...user, role: 'USER' }; // Drizzle user object matches needed shape mostly
+        if (passwordsMatch) return { ...user, role: 'USER' };
 
         return null;
       },
