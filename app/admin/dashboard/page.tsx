@@ -42,58 +42,58 @@ export default async function AdminDashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-100 p-8 font-sans">
-            <h1 className="text-4xl font-extrabold mb-8 text-charcoal">God Mode.</h1>
+        <div className="min-h-screen bg-[#F3F3F1] p-8 font-sans">
+            <h1 className="text-5xl font-serif font-black mb-12 text-[#1E2330]">God Mode.</h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-                <div className="bg-white p-8 rounded-[2rem] shadow-sm">
+                <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-200">
                     <h3 className="text-gray-400 font-bold uppercase text-xs tracking-widest">Total Citizens</h3>
-                    <p className="text-6xl font-black mt-2 text-charcoal">{userCount}</p>
+                    <p className="text-6xl font-black mt-2 text-[#1E2330]">{userCount}</p>
                 </div>
 
-                <div className="bg-charcoal text-white p-8 rounded-[2rem] shadow-lg">
+                <div className="bg-[#1E2330] text-white p-8 rounded-[2rem] shadow-xl">
                     <h3 className="text-gray-400 font-bold uppercase text-xs tracking-widest mb-4">Traffic Injection</h3>
                     <form action={injectTraffic} className="flex gap-4 items-end">
                         <div className="flex-1">
-                            <label className="text-xs font-bold mb-1 block">Source Handle</label>
-                            <input name="source" className="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-sm" placeholder="newbie" />
+                            <label className="text-xs font-bold mb-1 block opacity-50">Source</label>
+                            <input name="source" className="w-full bg-white/10 border border-white/10 rounded-lg p-2 text-sm text-white placeholder-white/30 focus:border-[#D2E823] outline-none" placeholder="newbie" />
                         </div>
-                        <div className="text-2xl mb-2">→</div>
+                        <div className="text-2xl mb-2 text-[#D2E823]">→</div>
                         <div className="flex-1">
-                            <label className="text-xs font-bold mb-1 block">Target Handle</label>
-                            <input name="target" className="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-sm" placeholder="vip_user" />
+                            <label className="text-xs font-bold mb-1 block opacity-50">Target</label>
+                            <input name="target" className="w-full bg-white/10 border border-white/10 rounded-lg p-2 text-sm text-white placeholder-white/30 focus:border-[#D2E823] outline-none" placeholder="vip_user" />
                         </div>
-                        <Button type="submit" className="bg-lime text-black hover:bg-white text-xs px-4">Connect</Button>
+                        <Button type="submit" className="bg-[#D2E823] text-black hover:bg-white text-xs px-4 py-2 h-10">Connect</Button>
                     </form>
                 </div>
 
-                <div className="bg-electric text-white p-8 rounded-[2rem] shadow-lg">
+                <div className="bg-[#2C50E3] text-white p-8 rounded-[2rem] shadow-xl">
                     <h3 className="text-white/70 font-bold uppercase text-xs tracking-widest mb-4">Growth Tools</h3>
                     <form action={generateInfiniteInvite}>
-                        <Button type="submit" className="w-full bg-white text-electric hover:bg-gray-100">Generate Master Invite</Button>
+                        <Button type="submit" className="w-full bg-white text-[#2C50E3] hover:bg-gray-100 font-bold py-3 text-sm">Generate Master Invite</Button>
                     </form>
                 </div>
             </div>
 
-            <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-200">
+            <div className="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-200">
                 <table className="w-full text-left">
                     <thead className="bg-gray-50 border-b border-gray-100">
                         <tr>
-                            <th className="p-4 font-bold text-xs uppercase text-gray-400">Handle</th>
-                            <th className="p-4 font-bold text-xs uppercase text-gray-400">Email</th>
-                            <th className="p-4 font-bold text-xs uppercase text-gray-400">Plan</th>
-                            <th className="p-4 font-bold text-xs uppercase text-gray-400">Actions</th>
+                            <th className="p-6 font-bold text-xs uppercase text-gray-400 tracking-wider">Handle</th>
+                            <th className="p-6 font-bold text-xs uppercase text-gray-400 tracking-wider">Email</th>
+                            <th className="p-6 font-bold text-xs uppercase text-gray-400 tracking-wider">Plan</th>
+                            <th className="p-6 font-bold text-xs uppercase text-gray-400 tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {allUsers.map((u: any) => (
                             <tr key={u.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
-                                <td className="p-4 font-bold">@{u.handle}</td>
-                                <td className="p-4 text-gray-500 text-sm">{u.email}</td>
-                                <td className="p-4"><span className={`text-xs font-bold px-2 py-1 rounded ${u.planStatus === 'pro' ? 'bg-black text-white' : 'bg-gray-100 text-gray-500'}`}>{u.planStatus.toUpperCase()}</span></td>
-                                <td className="p-4 flex gap-2">
+                                <td className="p-6 font-bold text-[#1E2330]">@{u.handle}</td>
+                                <td className="p-6 text-gray-500 text-sm font-medium">{u.email}</td>
+                                <td className="p-6"><span className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide ${u.planStatus === 'pro' ? 'bg-[#1E2330] text-white' : 'bg-gray-100 text-gray-500'}`}>{u.planStatus}</span></td>
+                                <td className="p-6 flex gap-2">
                                     <form action={toggleBan.bind(null, u.id, 'active')}>
-                                        <button className="text-red-500 font-bold text-xs hover:underline">BAN</button>
+                                        <button className="text-[#780016] font-black text-xs hover:underline bg-[#780016]/10 px-3 py-1 rounded-full">BAN</button>
                                     </form>
                                 </td>
                             </tr>

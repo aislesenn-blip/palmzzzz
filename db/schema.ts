@@ -2,10 +2,10 @@ import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
 import { sql } from 'drizzle-orm';
 
 export const users = sqliteTable('users', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey(), // UUID
   handle: text('handle').notNull().unique(),
   email: text('email').notNull().unique(),
-  password: text('password').notNull(),
+  password: text('password').notNull(), // Hashed
   whatsappNumber: text('whatsapp_number').notNull(),
   avatarUrl: text('avatar_url'),
   bio: text('bio'),
@@ -13,8 +13,7 @@ export const users = sqliteTable('users', {
   planStatus: text('plan_status', { enum: ['free', 'pro'] }).default('free').notNull(),
   persona: text('persona', { enum: ['business', 'service'] }),
   template: text('template', { enum: ['Muse', 'Titan', 'Studio'] }).default('Muse'),
-  inviteCodeUsed: text('invite_code_used'),
-  invitesGenerated: integer('invites_generated').default(0).notNull(),
+  invitesRemaining: integer('invites_remaining').default(3).notNull(),
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 });
 
@@ -34,7 +33,7 @@ export const products = sqliteTable('products', {
 export const reviews = sqliteTable('reviews', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   productId: integer('product_id').references(() => products.id).notNull(),
-  rating: integer('rating').notNull(),
+  rating: integer('rating').notNull(), // 1-5
   comment: text('comment'),
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`).notNull(),
 });

