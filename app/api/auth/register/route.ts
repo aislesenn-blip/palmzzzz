@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { users, invites } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { hashPassword, signToken } from '@/lib/auth';
+import { signToken } from '@/lib/auth';
+import { hashPassword } from '@/lib/password';
 import { z } from 'zod';
 
 const registerSchema = z.object({
