@@ -2,7 +2,6 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { products } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
-import { Button } from "@/components/ui/Button";
 import AddProductModal from "@/components/dashboard/AddProductModal";
 import Link from "next/link";
 import { redirect } from "next/navigation";
