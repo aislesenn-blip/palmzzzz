@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { createProduct } from "@/app/actions";
+import { createProduct } from "@/app/actions"; // We will create this action
 import { Upload, X, DollarSign } from "lucide-react";
 
 export default function AddProductModal({ userPlan, productCount }: { userPlan: string, productCount: number }) {

@@ -8,18 +8,8 @@ import { revalidatePath } from "next/cache";
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
-    let userCount = 0;
-    let allUsers = [];
-
-    try {
-        const userCountRes = await db.select({ count: count() }).from(users);
-        if (userCountRes && userCountRes[0]) {
-            userCount = userCountRes[0].count;
-        }
-        allUsers = await db.select().from(users);
-    } catch (e) {
-        console.error("DB Error:", e);
-    }
+    const userCount = (await db.select({ count: count() }).from(users))[0].count;
+    const allUsers = await db.select().from(users);
 
     async function injectTraffic(formData: FormData) {
         "use server";
@@ -32,13 +22,9 @@ export default async function AdminDashboard() {
     async function generateInfiniteInvite() {
         "use server";
         const code = `MASTER-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-        await db.insert(invites).values({ code, usageLimit: 999999, generatedBy: 'ADMIN' });
+        // Using very high number for unlimited
+        await db.insert(invites).values({ code, usageLimit: 999999 });
         revalidatePath('/admin/dashboard');
-    }
-
-    async function toggleBan(userId: string, currentStatus: string) {
-        "use server";
-        console.log("Ban toggle", userId);
     }
 
     return (
@@ -82,7 +68,6 @@ export default async function AdminDashboard() {
                             <th className="p-6 font-bold text-xs uppercase text-gray-400 tracking-wider">Handle</th>
                             <th className="p-6 font-bold text-xs uppercase text-gray-400 tracking-wider">Email</th>
                             <th className="p-6 font-bold text-xs uppercase text-gray-400 tracking-wider">Plan</th>
-                            <th className="p-6 font-bold text-xs uppercase text-gray-400 tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -90,12 +75,7 @@ export default async function AdminDashboard() {
                             <tr key={u.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
                                 <td className="p-6 font-bold text-[#1E2330]">@{u.handle}</td>
                                 <td className="p-6 text-gray-500 text-sm font-medium">{u.email}</td>
-                                <td className="p-6"><span className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide ${u.planStatus === 'pro' ? 'bg-[#1E2330] text-white' : 'bg-gray-100 text-gray-500'}`}>{u.planStatus}</span></td>
-                                <td className="p-6 flex gap-2">
-                                    <form action={toggleBan.bind(null, u.id, 'active')}>
-                                        <button className="text-[#780016] font-black text-xs hover:underline bg-[#780016]/10 px-3 py-1 rounded-full">BAN</button>
-                                    </form>
-                                </td>
+                                <td className="p-6"><span className={`text-xs font-black px-3 py-1 rounded-full uppercase tracking-wide ${u.plan === 'pro' ? 'bg-[#1E2330] text-white' : 'bg-gray-100 text-gray-500'}`}>{u.plan}</span></td>
                             </tr>
                         ))}
                     </tbody>

