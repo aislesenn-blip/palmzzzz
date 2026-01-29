@@ -20,8 +20,7 @@ export function middleware(request: NextRequest) {
   if (isProtectedRoute && !hasSession) {
     // Redirect unauthenticated users to login page
     const url = request.nextUrl.clone();
-    url.pathname = '/login'; // Or /admin/login if it was an admin route?
-    // Usually standard login is fine, or redirect admin to admin login.
+    url.pathname = '/login';
 
     if (pathname.startsWith('/admin')) {
         url.pathname = '/admin/login';
@@ -35,6 +34,15 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Matcher ignoring static files and images
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$).*)'],
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    '/((?!api|_next/static|_next/image|favicon.ico|public|.*\\..*).*)',
+  ],
 };

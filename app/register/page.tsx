@@ -91,7 +91,12 @@ function RegisterContent() {
                 <div className="animate-in fade-in slide-in-from-right">
                     <h1 className="text-3xl font-serif font-black mb-2 text-black">The Gate.</h1>
                     <p className="text-gray-500 mb-6 font-medium">Enter your invite code.</p>
-                    <input name="code" placeholder="Invite Code" onChange={handleChange} className="w-full h-14 border-2 border-black rounded-xl text-center font-mono text-xl mb-6 focus:outline-none text-black" />
+                    <input
+                        name="code"
+                        placeholder="Invite Code"
+                        onChange={handleChange}
+                        className="w-full h-14 border-2 border-black rounded-xl text-center font-mono text-xl mb-6 focus:outline-none text-black"
+                    />
                     {error && <p className="text-red-500 mb-4 font-bold bg-red-50 p-3 rounded-lg text-center">{error}</p>}
                     <button
                         onClick={checkInvite}
