@@ -18,7 +18,7 @@ export default async function Storefront({ params }: { params: Promise<{ handle:
 
     if (!user) return notFound();
 
-    const userProducts = await db.select().from(products).where(eq(products.userId, user.id)).orderBy(desc(products.createdAt));
+    const userProducts = await db.select().from(products).where(eq(products.userId, String(user.id))).orderBy(desc(products.createdAt));
 
     return (
         <div className="min-h-screen bg-gray-50 pb-20">
