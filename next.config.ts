@@ -2,11 +2,14 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    unoptimized: true, // Bypass Image Optimization to prevent R2/Loader crashes
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**', // Allow all domains for demo mode
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'pub-956ad74f3bb84ed9ab20fbcb1c10e84f.r2.dev',
       },
     ],
   },
