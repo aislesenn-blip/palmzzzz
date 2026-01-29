@@ -9,8 +9,7 @@ export default function Home() {
       <nav className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
         <div className="bg-white/95 backdrop-blur-md rounded-full shadow-lg px-4 py-3 md:px-6 md:py-3 flex justify-between items-center w-full max-w-4xl border border-gray-100">
           <Link href="/" className="text-xl md:text-2xl tracking-tight text-black flex items-center group">
-            <span className="font-bold font-sans text-[#153308]">Tweet</span>
-            <span className="font-serif italic font-normal -ml-1.5 text-black">Store.</span>
+            <span className="font-black font-sans text-black">TweetStore</span>
           </Link>
           <div className="flex gap-2 items-center">
             <Link href="/login" className="px-3 py-1.5 md:px-5 md:py-2.5 rounded-full bg-gray-100 font-bold text-gray-800 hover:bg-gray-200 transition text-xs md:text-sm whitespace-nowrap">

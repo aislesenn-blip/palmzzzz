@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { Briefcase, Zap, Upload } from "lucide-react";
+import { Briefcase, Zap, Upload, ArrowRight, Check } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { registerUser } from "@/app/actions";
+import { registerUser, verifyInviteCode } from "@/app/actions";
 
 function RegisterContent() {
     const router = useRouter();
@@ -28,6 +28,7 @@ function RegisterContent() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [uploading, setUploading] = useState(false);
+    const [checkingInvite, setCheckingInvite] = useState(false);
 
     // --- LOGIC ---
 
@@ -35,17 +36,21 @@ function RegisterContent() {
 
     const checkInvite = async () => {
         if (!formData.code) return;
-        // Strict Hard Gate: Assuming invalid until verified by Server Action ideally,
-        // but for client UX flow we proceed if non-empty and let server reject if invalid.
-        // Prompt says "No Bypass: Even if the user types anything, if it's not in our DB, they stay on Step 1."
-        // To implement this strictly on client without exposing DB, we need a Server Action helper.
-        // BUT, the registerUser action handles the check and redirects on error.
-        // We will proceed to step 2 visually, but the final submission will fail and redirect back if invalid.
-        // Wait, "if it's not in our DB, they stay on Step 1". This implies an immediate check.
-        // I should add a verification step here.
-        // For now, enforcing non-empty input is the requested "Strict Validation" on the client side.
-        if (formData.code.length > 0) setStep(2);
-        else setError("Access Denied. Invite Only.");
+        setCheckingInvite(true);
+        setError("");
+
+        try {
+            const isValid = await verifyInviteCode(formData.code);
+            if (isValid) {
+                setStep(2);
+            } else {
+                setError("Access Denied. Invalid Invite Code.");
+            }
+        } catch (e) {
+            setError("Error verifying code.");
+        } finally {
+            setCheckingInvite(false);
+        }
     };
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,14 +95,15 @@ function RegisterContent() {
                     {error && <p className="text-red-500 mb-4 font-bold bg-red-50 p-3 rounded-lg text-center">{error}</p>}
                     <button
                         onClick={checkInvite}
-                        disabled={!formData.code}
+                        disabled={!formData.code || checkingInvite}
                         className="w-full h-14 bg-black text-white font-bold rounded-xl hover:scale-[1.02] transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        Unlock Access
+                        {checkingInvite ? "Verifying..." : "Unlock Access"}
                     </button>
                 </div>
             )}
 
+            {/* Other Steps ... (Keeping logic consistent) */}
             {step === 2 && (
                 <div className="animate-in fade-in slide-in-from-right">
                     <h1 className="text-3xl font-serif font-black mb-6 text-black">Identity</h1>
