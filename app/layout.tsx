@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Tweet Store",
-  description: "The Instant Storefront for Global Creators",
+  description: "Link in bio for Business & Service People",
 };
 
 export default function RootLayout({

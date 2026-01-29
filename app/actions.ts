@@ -1,9 +1,11 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { products } from "@/db/schema";
+import { products, users } from "@/db/schema";
 import { auth } from "@/auth";
 import { revalidatePath } from "next/cache";
+import { eq } from "drizzle-orm";
+import { redirect } from "next/navigation";
 
 export async function createProduct(formData: FormData) {
     const session = await auth();
@@ -24,4 +26,15 @@ export async function createProduct(formData: FormData) {
 
     revalidatePath("/dashboard");
     return { success: true };
+}
+
+export async function updateProfile(formData: FormData) {
+    const session = await auth();
+    if (!session?.user) return;
+
+    const bio = formData.get('bio') as string;
+    const imageUrl = formData.get('imageUrl') as string;
+
+    await db.update(users).set({ bio, avatarUrl: imageUrl }).where(eq(users.id, session.user.id));
+    redirect('/dashboard');
 }

