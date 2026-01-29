@@ -8,7 +8,7 @@ const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID || 'mock';
 const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID || 'mock';
 const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY || 'mock';
 const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME || 'tweetstore-assets';
-const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL || 'https://pub-mock.r2.dev';
+const R2_PUBLIC_DOMAIN = process.env.R2_PUBLIC_DOMAIN || 'https://pub-mock.r2.dev';
 
 const S3 = new S3Client({
   region: 'auto',
@@ -39,12 +39,12 @@ export async function POST(req: Request) {
         if (R2_ACCOUNT_ID === 'mock') {
             return NextResponse.json({
                 uploadUrl: 'http://localhost:3000/api/mock-upload',
-                publicUrl: `${R2_PUBLIC_URL}/${key}`
+                publicUrl: `${R2_PUBLIC_DOMAIN}/${key}`
             });
         }
 
         const uploadUrl = await getSignedUrl(S3, command, { expiresIn: 3600 });
-        const publicUrl = `${R2_PUBLIC_URL}/${key}`;
+        const publicUrl = `${R2_PUBLIC_DOMAIN}/${key}`;
 
         return NextResponse.json({ uploadUrl, publicUrl });
     } catch (error) {
