@@ -25,11 +25,11 @@ export async function POST(req: Request) {
         const { name, price, description, imageUrl } = productSchema.parse(body);
 
         // Check limit
-        const userProducts = await db.select({ count: count() }).from(products).where(eq(products.userId, userPayload.id));
+        const userProducts = await db.select({ count: count() }).from(products).where(eq(products.userId, userPayload.id as number));
         const productCount = userProducts[0].count;
 
         // Check user plan
-        const userRows = await db.select().from(users).where(eq(users.id, userPayload.id));
+        const userRows = await db.select().from(users).where(eq(users.id, userPayload.id as number));
         const userRow = userRows[0];
 
         if (userRow.plan === 'free' && productCount >= 10) {
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
         }
 
         const newProduct = await db.insert(products).values({
-            userId: userPayload.id,
+            userId: userPayload.id as number,
             name,
             price,
             description,
@@ -58,6 +58,6 @@ export async function GET(req: Request) {
 
     if (!userPayload) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const userProducts = await db.select().from(products).where(eq(products.userId, userPayload.id));
+    const userProducts = await db.select().from(products).where(eq(products.userId, userPayload.id as number));
     return NextResponse.json({ products: userProducts });
 }
