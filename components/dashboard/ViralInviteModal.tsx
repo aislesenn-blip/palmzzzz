@@ -37,7 +37,7 @@ export default function ViralInviteModal({ invitesRemaining }: { invitesRemainin
                     <p className="text-4xl font-mono font-black text-[#780016]">47:59:59</p>
                 </div>
 
-                <Button variant="black" className="w-full py-5 text-xl shadow-xl hover:scale-105 transition-transform" onClick={() => setIsOpen(false)}>Send Invites</Button>
+                <Button className="w-full py-5 text-xl shadow-xl hover:scale-105 transition-transform bg-black text-white" onClick={() => setIsOpen(false)}>Send Invites</Button>
             </div>
         </div>
     );

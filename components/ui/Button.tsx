@@ -1,5 +1,3 @@
-import { LucideIcon } from "lucide-react";
-
 export function Button({ children, onClick, className, disabled, type = 'button', variant = 'primary', ...props }: any) {
     const base = "font-bold py-3 px-6 rounded-full transition-transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed";
     const variants = {

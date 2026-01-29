@@ -11,7 +11,7 @@ export default function ProductDrawer({ product, whatsappNumber }: { product: an
         <>
             <div onClick={() => setIsOpen(true)} className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all cursor-pointer border border-gray-100 group relative">
                 <div className="aspect-[4/5] relative overflow-hidden">
-                     <img src={product.imageUrl} alt={product.title} className="w-full h-full object-cover" />
+                     <img src={product.image} alt={product.title} className="w-full h-full object-cover" />
                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                 </div>
                 <div className="p-6 flex justify-between items-center bg-white relative z-10">
@@ -49,7 +49,7 @@ export default function ProductDrawer({ product, whatsappNumber }: { product: an
 
                             <div className="p-8 pt-2 pb-32">
                                 <div className="aspect-square rounded-3xl overflow-hidden mb-8 shadow-inner bg-gray-100">
-                                    <img src={product.imageUrl} className="w-full h-full object-cover" />
+                                    <img src={product.image} className="w-full h-full object-cover" />
                                 </div>
 
                                 <h2 className="text-4xl font-serif font-bold mb-2 text-charcoal">{product.title}</h2>
@@ -78,7 +78,7 @@ export default function ProductDrawer({ product, whatsappNumber }: { product: an
                                 <a
                                     href={`https://wa.me/${whatsappNumber}?text=Hi, I want to buy ${product.title} for $${product.price}`}
                                     target="_blank"
-                                    className="block w-full bg-forest text-white text-center font-bold text-lg py-5 rounded-full hover:scale-[1.02] transition-transform shadow-xl"
+                                    className="block w-full bg-[#153308] text-[#D2E823] text-center font-bold text-lg py-5 rounded-full hover:scale-[1.02] transition-transform shadow-xl"
                                 >
                                     BUY ON WHATSAPP
                                 </a>
