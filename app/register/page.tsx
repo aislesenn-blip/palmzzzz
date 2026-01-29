@@ -1,20 +1,15 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { Button } from "@/components/ui/Button"; // Will create this later
-import { Input } from "@/components/ui/Input";   // Will create this later
-import { Briefcase, Zap, Upload, ArrowRight, Check } from "lucide-react";
+import { Briefcase, Zap, Upload } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createProduct, registerUser } from "@/app/actions";
+import { registerUser } from "@/app/actions";
 
 function RegisterContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    // Step state
     const [step, setStep] = useState(1);
-
-    // Form Data
     const [formData, setFormData] = useState({
         code: "",
         handle: searchParams.get("handle") || "",
@@ -31,15 +26,13 @@ function RegisterContent() {
     const [error, setError] = useState("");
     const [uploading, setUploading] = useState(false);
 
-    // --- LOGIC ---
-
     const handleChange = (e: any) => setFormData({...formData, [e.target.name]: e.target.value});
 
     const checkInvite = async () => {
-        // Mock check or API call. For simplicity in this client flow we trust the user input
-        // until final submission where server validates.
-        if (formData.code.length > 3) setStep(2);
-        else setError("Invalid Code");
+        if (!formData.code) return;
+        // Mock check on client, validated on server
+        if (formData.code.length > 0) setStep(2);
+        else setError("Access Denied. Invite Only.");
     };
 
     const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,7 +60,7 @@ function RegisterContent() {
     };
 
     return (
-        <div className="w-full max-w-lg bg-white p-8 rounded-[2.5rem] shadow-xl">
+        <div className="w-full max-w-lg bg-white p-8 rounded-[2.5rem] shadow-xl border border-gray-100">
             {/* Progress */}
             <div className="flex gap-2 mb-8">
                 {[1,2,3,4,5,6].map(i => (
@@ -75,24 +68,31 @@ function RegisterContent() {
                 ))}
             </div>
 
-            {/* STEPS */}
+            {/* Step 1: The Gate (Strict) */}
             {step === 1 && (
                 <div className="animate-in fade-in slide-in-from-right">
-                    <h1 className="text-3xl font-serif font-black mb-2">The Gate.</h1>
-                    <p className="text-gray-500 mb-6">Enter your invite code.</p>
-                    <input name="code" placeholder="Invite Code" onChange={handleChange} className="w-full h-14 border-2 border-black rounded-xl text-center font-mono text-xl mb-6" />
-                    {error && <p className="text-red-500 mb-4">{error}</p>}
-                    <button onClick={checkInvite} className="w-full h-14 bg-black text-white font-bold rounded-xl hover:scale-[1.02] transition">Unlock Access</button>
+                    <h1 className="text-3xl font-serif font-black mb-2 text-black">The Gate.</h1>
+                    <p className="text-gray-500 mb-6 font-medium">Enter your invite code.</p>
+                    <input name="code" placeholder="Invite Code" onChange={handleChange} className="w-full h-14 border-2 border-black rounded-xl text-center font-mono text-xl mb-6 focus:outline-none text-black" />
+                    {error && <p className="text-red-500 mb-4 font-bold bg-red-50 p-3 rounded-lg text-center">{error}</p>}
+                    <button
+                        onClick={checkInvite}
+                        disabled={!formData.code}
+                        className="w-full h-14 bg-black text-white font-bold rounded-xl hover:scale-[1.02] transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Unlock Access
+                    </button>
                 </div>
             )}
 
+            {/* Other Steps ... (Keeping logic consistent but updated formatting if needed, reusing previous code for steps 2-6) */}
             {step === 2 && (
                 <div className="animate-in fade-in slide-in-from-right">
-                    <h1 className="text-3xl font-serif font-black mb-6">Identity</h1>
+                    <h1 className="text-3xl font-serif font-black mb-6 text-black">Identity</h1>
                     <div className="space-y-4">
-                        <input name="handle" placeholder="Handle" value={formData.handle} onChange={handleChange} className="w-full p-4 bg-gray-50 rounded-xl" />
-                        <input name="email" type="email" placeholder="Email" onChange={handleChange} className="w-full p-4 bg-gray-50 rounded-xl" />
-                        <input name="password" type="password" placeholder="Password" onChange={handleChange} className="w-full p-4 bg-gray-50 rounded-xl" />
+                        <input name="handle" placeholder="Handle" value={formData.handle} onChange={handleChange} className="w-full p-4 bg-gray-50 rounded-xl border-2 border-transparent focus:border-black outline-none text-black" />
+                        <input name="email" type="email" placeholder="Email" onChange={handleChange} className="w-full p-4 bg-gray-50 rounded-xl border-2 border-transparent focus:border-black outline-none text-black" />
+                        <input name="password" type="password" placeholder="Password" onChange={handleChange} className="w-full p-4 bg-gray-50 rounded-xl border-2 border-transparent focus:border-black outline-none text-black" />
                         <button onClick={() => setStep(3)} className="w-full h-14 bg-black text-white font-bold rounded-xl mt-4">Next Step</button>
                     </div>
                 </div>
@@ -100,22 +100,25 @@ function RegisterContent() {
 
             {step === 3 && (
                 <div className="animate-in fade-in slide-in-from-right">
-                    <h1 className="text-3xl font-serif font-black mb-2">The Engine</h1>
-                    <p className="text-gray-500 mb-6 text-sm">Your checkout counter. Orders sent here.</p>
-                    <input name="whatsapp" placeholder="WhatsApp Number" onChange={handleChange} className="w-full p-4 border-2 border-[#153308] rounded-xl mb-6" />
+                    <h1 className="text-3xl font-serif font-black mb-2 text-black">The Engine</h1>
+                    <p className="text-gray-500 mb-6 text-sm font-bold uppercase tracking-wider">MANDATORY</p>
+                    <p className="text-black mb-6 font-medium">This is your checkout counter. Orders sent here.</p>
+                    <input name="whatsapp" placeholder="WhatsApp Number" onChange={handleChange} className="w-full p-4 border-2 border-[#153308] rounded-xl mb-6 focus:outline-none text-black" />
                     <button onClick={() => setStep(4)} className="w-full h-14 bg-black text-white font-bold rounded-xl">Next Step</button>
                 </div>
             )}
 
             {step === 4 && (
                 <div className="animate-in fade-in slide-in-from-right">
-                    <h1 className="text-3xl font-serif font-black mb-6">Categorization</h1>
+                    <h1 className="text-3xl font-serif font-black mb-6 text-black">Categorization</h1>
                     <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div onClick={() => setFormData({...formData, persona: 'business'})} className={`p-6 border-2 rounded-xl cursor-pointer ${formData.persona === 'business' ? 'border-black bg-[#D2E823]' : 'border-gray-200'}`}>
-                            <Briefcase className="mb-2"/> <span className="font-bold">Business</span>
+                        <div onClick={() => setFormData({...formData, persona: 'business'})} className={`p-6 border-2 rounded-xl cursor-pointer ${formData.persona === 'business' ? 'border-black bg-[#D2E823]' : 'border-gray-200 hover:border-gray-300'}`}>
+                            <Briefcase className="mb-2 text-black"/> <span className="font-bold text-black">Business</span>
+                            <p className="text-xs mt-1 text-black/70">Grow my business.</p>
                         </div>
-                        <div onClick={() => setFormData({...formData, persona: 'service'})} className={`p-6 border-2 rounded-xl cursor-pointer ${formData.persona === 'service' ? 'border-black bg-[#2C50E3] text-white' : 'border-gray-200'}`}>
-                            <Zap className="mb-2"/> <span className="font-bold">Service</span>
+                        <div onClick={() => setFormData({...formData, persona: 'service'})} className={`p-6 border-2 rounded-xl cursor-pointer ${formData.persona === 'service' ? 'border-black bg-[#2C50E3] text-white' : 'border-gray-200 hover:border-gray-300'}`}>
+                            <Zap className="mb-2 text-black group-hover:text-white"/> <span className="font-bold text-black group-hover:text-white">Service Provider</span>
+                            <p className="text-xs mt-1 text-black/70 group-hover:text-white/80">Sell my skills.</p>
                         </div>
                     </div>
                     <button onClick={() => setStep(5)} disabled={!formData.persona} className="w-full h-14 bg-black text-white font-bold rounded-xl disabled:opacity-50">Next Step</button>
@@ -124,11 +127,20 @@ function RegisterContent() {
 
             {step === 5 && (
                 <div className="animate-in fade-in slide-in-from-right">
-                    <h1 className="text-3xl font-serif font-black mb-6">Vibe Check</h1>
+                    <h1 className="text-3xl font-serif font-black mb-6 text-black">Vibe Check</h1>
                     <div className="grid grid-cols-3 gap-3 mb-6">
-                        <div onClick={() => setFormData({...formData, template: 'muse'})} className={`h-32 rounded-lg bg-[#E9C0E9] cursor-pointer border-2 ${formData.template === 'muse' ? 'border-black' : 'border-transparent'}`}></div>
-                        <div onClick={() => setFormData({...formData, template: 'titan'})} className={`h-32 rounded-lg bg-[#1E2330] cursor-pointer border-2 ${formData.template === 'titan' ? 'border-[#D2E823]' : 'border-transparent'}`}></div>
-                        <div onClick={() => setFormData({...formData, template: 'studio'})} className={`h-32 rounded-lg bg-white border cursor-pointer border-2 ${formData.template === 'studio' ? 'border-black' : 'border-gray-200'}`}></div>
+                        <div onClick={() => setFormData({...formData, template: 'muse'})} className={`h-32 rounded-lg bg-[#E9C0E9] cursor-pointer border-2 ${formData.template === 'muse' ? 'border-black' : 'border-transparent'} p-2 flex flex-col justify-end`}>
+                            <span className="text-[10px] font-bold text-black">The Muse</span>
+                            <span className="text-[8px] text-black/60">Fashion & Beauty</span>
+                        </div>
+                        <div onClick={() => setFormData({...formData, template: 'titan'})} className={`h-32 rounded-lg bg-[#1E2330] cursor-pointer border-2 ${formData.template === 'titan' ? 'border-[#D2E823]' : 'border-transparent'} p-2 flex flex-col justify-end`}>
+                            <span className="text-[10px] font-bold text-white">The Titan</span>
+                            <span className="text-[8px] text-white/60">Business & Tech</span>
+                        </div>
+                        <div onClick={() => setFormData({...formData, template: 'studio'})} className={`h-32 rounded-lg bg-white border cursor-pointer border-2 ${formData.template === 'studio' ? 'border-black' : 'border-gray-200'} p-2 flex flex-col justify-end`}>
+                            <span className="text-[10px] font-bold text-black">The Studio</span>
+                            <span className="text-[8px] text-black/60">Services</span>
+                        </div>
                     </div>
                     <button onClick={() => setStep(6)} disabled={!formData.template} className="w-full h-14 bg-black text-white font-bold rounded-xl disabled:opacity-50">Next Step</button>
                 </div>
@@ -136,20 +148,20 @@ function RegisterContent() {
 
             {step === 6 && (
                 <div className="animate-in fade-in slide-in-from-right">
-                    <h1 className="text-3xl font-serif font-black mb-6">Setup Profile</h1>
+                    <h1 className="text-3xl font-serif font-black mb-6 text-black">Setup Profile</h1>
 
                     <div className="flex justify-center mb-6">
-                        <label className="w-32 h-32 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-black transition">
+                        <label className="w-32 h-32 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-black transition bg-gray-50">
                             <input type="file" onChange={handleUpload} className="hidden" />
                             {formData.avatarUrl ? <img src={formData.avatarUrl} className="w-full h-full rounded-full object-cover"/> : <Upload className="text-gray-400"/>}
                         </label>
                     </div>
 
-                    <textarea placeholder="Bio (Min 10 chars)" onChange={handleChange} name="bio" className="w-full p-4 border rounded-xl mb-6 h-24 resize-none" />
+                    <textarea placeholder="Bio (Min 10 chars)" onChange={handleChange} name="bio" className="w-full p-4 border-2 border-gray-200 rounded-xl mb-6 h-24 resize-none focus:border-black outline-none text-black" />
 
                     {error && <p className="text-red-500 font-bold mb-4 text-center">{error}</p>}
 
-                    <button onClick={submitRegistration} disabled={loading || !formData.avatarUrl || formData.bio.length < 10} className="w-full h-14 bg-[#153308] text-[#D2E823] font-bold rounded-xl hover:scale-[1.02] transition">
+                    <button onClick={submitRegistration} disabled={loading || !formData.avatarUrl || formData.bio.length < 10} className="w-full h-14 bg-[#153308] text-[#D2E823] font-bold rounded-xl hover:scale-[1.02] transition shadow-xl disabled:opacity-50 disabled:cursor-not-allowed">
                         {loading ? "Creating..." : "Enter Dashboard"}
                     </button>
                 </div>
