@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/Button";
-import Link from "next/link";
 
 async function getUnsplashImages() {
   const res = await fetch(`https://api.unsplash.com/photos/random?count=12&query=fashion,minimalist,tech&client_id=${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}`);
