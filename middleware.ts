@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Simple pass-through to verify site works
+  // PASS-THROUGH: No logic, just allow everything.
   return NextResponse.next();
 }
 
