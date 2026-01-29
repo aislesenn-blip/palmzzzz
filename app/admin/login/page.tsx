@@ -5,7 +5,7 @@ import { signIn } from "@/auth";
 export default function AdminLogin() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-charcoal p-4 font-sans">
-            <div className="bg-gray-900 p-12 rounded-3xl border border-gray-800 max-w-sm w-full shadow-2xl">
+            <div className="bg-gray-900 p-12 rounded-[2.5rem] border border-gray-800 max-w-sm w-full shadow-2xl">
                 <h1 className="text-white text-2xl font-serif font-bold mb-8 text-center tracking-tight">Restricted Access</h1>
                 <form action={async (formData) => {
                     "use server";
