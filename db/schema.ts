@@ -16,7 +16,7 @@ export const users = sqliteTable('users', {
 
 export const products = sqliteTable('products', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').references(() => users.id).notNull(),
+  userId: text('user_id').references(() => users.id).notNull(),
   name: text('name').notNull(),
   description: text('description'),
   price: text('price').notNull(), // Free text input as per requirements
