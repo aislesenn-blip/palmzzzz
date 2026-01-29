@@ -11,7 +11,9 @@ export default async function Dashboard() {
     const session = await auth();
     if (!session?.user?.id) redirect('/login');
 
-    const user = await db.query.users.findFirst({ where: eq(users.id, session.user.id) });
+    const user = await db.select().from(users).where(eq(users.id, session.user.id)).get();
+
+    // Safety check
     if (!user) redirect('/login');
 
     const userProducts = await db.select().from(products).where(eq(products.userId, session.user.id)).orderBy(desc(products.createdAt));
@@ -23,7 +25,6 @@ export default async function Dashboard() {
                     <span className="text-xl font-serif font-black tracking-tight text-black">TweetStore.</span>
                     <div className="flex items-center gap-4">
                         <ViralInviteModal invitesRemaining={3} />
-                        {/* Note: invitesRemaining logic simplified, real app would verify count */}
                         <span className="font-bold text-sm bg-[#D2E823] px-4 py-2 rounded-full text-black border border-black/5">@{ user.handle }</span>
                         <form action={async () => { "use server"; await import("@/auth").then(m => m.signOut()); }}><button className="text-sm font-bold text-gray-400 hover:text-[#780016] transition-colors">Sign Out</button></form>
                     </div>
@@ -53,7 +54,7 @@ export default async function Dashboard() {
 
                 <div className="flex justify-between items-end mb-8">
                     <h2 className="text-4xl font-serif font-black text-black">Your Inventory</h2>
-                    <AddProductModal userPlan={user?.planStatus || 'free'} productCount={userProducts.length} />
+                    <AddProductModal userPlan={user?.plan || 'free'} productCount={userProducts.length} />
                 </div>
 
                 {userProducts.length === 0 ? (
@@ -62,7 +63,7 @@ export default async function Dashboard() {
                          <h3 className="text-3xl font-serif font-bold mb-2 text-black">Your store is empty.</h3>
                          <p className="text-gray-500 mb-8 max-w-sm mx-auto text-lg">Upload your first digital or physical product to start selling.</p>
                          <div className="inline-block">
-                            <AddProductModal userPlan={user?.planStatus || 'free'} productCount={userProducts.length} />
+                            <AddProductModal userPlan={user?.plan || 'free'} productCount={userProducts.length} />
                          </div>
                     </div>
                 ) : (

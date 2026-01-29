@@ -23,7 +23,7 @@ export default function ProductDrawer({ product, whatsappNumber }: { product: an
                             <span className="text-charcoal font-bold">${product.price}</span>
                         </div>
                     </div>
-                    <button className="bg-charcoal text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-black transition-colors shadow-lg">
+                    <button className="bg-[#153308] text-[#D2E823] px-6 py-3 rounded-full font-bold text-sm hover:scale-105 transition-transform shadow-lg">
                         GET
                     </button>
                 </div>
@@ -59,8 +59,8 @@ export default function ProductDrawer({ product, whatsappNumber }: { product: an
                                     {product.description || "No description provided."}
                                 </div>
 
-                                <div className="bg-cream rounded-3xl p-8 mb-8">
-                                    <h4 className="font-bold mb-6 flex items-center gap-3 text-xl font-serif">
+                                <div className="bg-[#F3F3F1] rounded-3xl p-8 mb-8">
+                                    <h4 className="font-bold mb-6 flex items-center gap-3 text-xl font-serif text-black">
                                         <span>Reviews</span>
                                         <span className="bg-black text-white text-xs px-3 py-1 rounded-full font-sans">3</span>
                                     </h4>

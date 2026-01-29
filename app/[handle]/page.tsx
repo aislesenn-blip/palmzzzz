@@ -1,94 +1,75 @@
 import { db } from "@/lib/db";
 import { users, products, trafficInjections } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
-import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { LucideShoppingBag, LucideStar } from "lucide-react";
+import Image from "next/image";
 import ProductDrawer from "@/components/storefront/ProductDrawer";
+import { Instagram, Globe, Mail } from "lucide-react";
 
-export default async function StorePage({ params }: { params: Promise<{ handle: string }> }) {
-  const { handle } = await params;
+export default async function Storefront({ params }: { params: Promise<{ handle: string }> }) {
+    const { handle } = await params;
+    const user = await db.query.users.findFirst({ where: eq(users.handle, handle) });
+    if (!user) return notFound();
 
-  // 1. Fetch User Data
-  const user = await db.select().from(users).where(eq(users.handle, handle)).get();
-  if (!user) return notFound();
+    const userProducts = await db.select().from(products).where(eq(products.userId, user.id)).orderBy(desc(products.createdAt));
 
-  // 2. Fetch User Products
-  const userProducts = await db.select().from(products).where(eq(products.userId, user.id));
+    // Traffic Injection Logic
+    let injectedProducts = [];
+    const injection = await db.query.trafficInjections.findFirst({ where: eq(trafficInjections.sourceHandle, handle) });
+    if (injection) {
+        const targetUser = await db.query.users.findFirst({ where: eq(users.handle, injection.targetHandle) });
+        if (targetUser) {
+            injectedProducts = await db.select().from(products).where(eq(products.userId, targetUser.id)).limit(4);
+        }
+    } else {
+        // Fallback: Random user products
+        injectedProducts = await db.select().from(products).orderBy(desc(products.views)).limit(4);
+    }
 
-  // 4. Traffic Injection Logic (Placeholder Logic)
-  // In a real scenario, query the 'traffic_injections' table here.
-  let injectedProducts = [];
-  const injection = await db.query.trafficInjections.findFirst({ where: eq(trafficInjections.sourceHandle, handle) });
-  if (injection) {
-      const targetUser = await db.query.users.findFirst({ where: eq(users.handle, injection.targetHandle) });
-      if (targetUser) {
-          injectedProducts = await db.select().from(products).where(eq(products.userId, targetUser.id)).limit(4);
-      }
-  }
+    return (
+        <div className="min-h-screen bg-[#F3F3F1] pb-32 font-sans">
+            {/* Header */}
+            <div className="bg-white pt-16 pb-10 px-4 text-center border-b border-gray-100 sticky top-0 z-10 shadow-sm/50 backdrop-blur-md bg-white/90">
+                <div className="w-28 h-28 rounded-full bg-gray-200 mx-auto mb-6 overflow-hidden relative border-4 border-white shadow-xl ring-1 ring-black/5">
+                    {user.avatar ? <Image src={user.avatar} alt={user.handle} fill className="object-cover" /> : <div className="w-full h-full bg-gradient-to-br from-[#1E2330] to-black text-white flex items-center justify-center text-4xl font-bold">{user.handle[0].toUpperCase()}</div>}
+                </div>
+                <h1 className="text-3xl font-serif font-black mb-2 text-black">@{user.handle}</h1>
+                <p className="text-gray-500 max-w-sm mx-auto text-base font-medium leading-relaxed">{user.bio || "Welcome to my digital store."}</p>
 
-  return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      {/* HEADER: Avatar & Bio */}
-      <header className="bg-white pt-12 pb-8 px-6 text-center rounded-b-[2rem] shadow-sm mb-6">
-        <div className="w-24 h-24 mx-auto relative mb-4">
-           {/* Fallback avatar if user has none */}
-           <Image
-             src={user.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200"}
-             alt={user.handle}
-             fill
-             className="object-cover rounded-full border-4 border-[#D2E823]"
-           />
+                {/* Socials Placeholder */}
+                <div className="flex justify-center gap-4 mt-6 text-gray-400">
+                    <div className="bg-gray-100 p-3 rounded-full hover:bg-black hover:text-white transition-all cursor-pointer"><Instagram size={20} /></div>
+                    <div className="bg-gray-100 p-3 rounded-full hover:bg-black hover:text-white transition-all cursor-pointer"><Globe size={20} /></div>
+                    <div className="bg-gray-100 p-3 rounded-full hover:bg-black hover:text-white transition-all cursor-pointer"><Mail size={20} /></div>
+                </div>
+            </div>
+
+            {/* Product Grid */}
+            <div className="max-w-md mx-auto p-6 space-y-6 mt-4">
+                {userProducts.map(p => (
+                    <ProductDrawer key={p.id} product={p} whatsappNumber={user.whatsapp || ''} />
+                ))}
+            </div>
+
+            {/* Traffic Loop */}
+            {injectedProducts.length > 0 && (
+                <div className="mt-24 border-t border-gray-200 pt-12 bg-white pb-16">
+                    <h3 className="text-center text-xs font-bold uppercase tracking-widest text-gray-400 mb-8 px-6">More from our Network</h3>
+                    <div className="flex overflow-x-auto gap-6 px-6 pb-4 snap-x no-scrollbar">
+                        {injectedProducts.map(p => (
+                            <div key={p.id} className="min-w-[200px] w-[200px] bg-white rounded-2xl overflow-hidden border border-gray-100 snap-center shadow-lg hover:shadow-xl transition-shadow cursor-pointer group">
+                                <div className="h-40 bg-gray-100 relative overflow-hidden">
+                                    <img src={p.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                </div>
+                                <div className="p-5">
+                                    <p className="font-bold text-sm truncate mb-1 font-serif text-black">{p.title}</p>
+                                    <p className="text-xs text-[#2C50E3] font-bold uppercase tracking-wide">${p.price}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
-        <h1 className="text-2xl font-black font-serif text-black mb-2">@{user.handle}</h1>
-        <p className="text-gray-600 max-w-sm mx-auto text-sm">{user.bio || "Welcome to my store!"}</p>
-
-        {/* Category Badge */}
-        {user.category && (
-          <span className="inline-block mt-3 px-3 py-1 bg-gray-100 text-xs font-bold uppercase tracking-wider text-gray-500 rounded-full">
-            {user.category}
-          </span>
-        )}
-      </header>
-
-      {/* PRODUCT GRID */}
-      <div className="px-4 max-w-md mx-auto space-y-4">
-        {userProducts.length === 0 ? (
-          <div className="text-center py-10 opacity-50">
-            <LucideShoppingBag className="mx-auto mb-2" size={32}/>
-            <p>No products yet.</p>
-          </div>
-        ) : (
-          userProducts.map((product) => (
-            <ProductDrawer key={product.id} product={product} whatsappNumber={user.whatsapp || ''} />
-          ))
-        )}
-      </div>
-
-      {/* TRAFFIC LOOP FOOTER (The Network) */}
-      {injectedProducts.length > 0 && (
-          <div className="mt-12 border-t border-gray-200 pt-8 px-6">
-            <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest text-center mb-4">More from TweetStore Network</h4>
-            <div className="flex gap-4 overflow-x-auto pb-4 hide-scrollbar">
-               {injectedProducts.map(p => (
-                   <div key={p.id} className="min-w-[120px] bg-white rounded-xl overflow-hidden shadow-sm">
-                       <div className="h-24 relative bg-gray-200">
-                           <Image src={p.image} alt={p.title} fill className="object-cover"/>
-                       </div>
-                       <div className="p-2">
-                           <p className="font-bold text-xs truncate">{p.title}</p>
-                       </div>
-                   </div>
-               ))}
-            </div>
-            <div className="text-center mt-6">
-              <Link href="/" className="text-xs font-black font-serif text-black opacity-50 hover:opacity-100">
-                Powered by TweetStore.
-              </Link>
-            </div>
-          </div>
-      )}
-    </div>
-  );
+    )
 }
