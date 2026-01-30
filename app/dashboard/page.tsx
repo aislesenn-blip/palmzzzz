@@ -11,12 +11,32 @@ export default async function Dashboard() {
     const session = await auth();
     if (!session?.user?.id) redirect('/login');
 
-    const user = await db.select().from(users).where(eq(users.id, session.user.id)).get();
+    let user = null;
+    try {
+        user = await db.select().from(users).where(eq(users.id, session.user.id)).get();
+    } catch (e) {
+        console.error("User fetch error:", e);
+    }
+
+    if (!user && session?.user) {
+        // Fallback for CEO or if DB fails
+        user = {
+            handle: session.user.name || "User",
+            plan: 'free',
+            id: session.user.id
+        };
+    }
 
     // Safety check
     if (!user) redirect('/login');
 
-    const userProducts = await db.select().from(products).where(eq(products.userId, session.user.id)).orderBy(desc(products.createdAt));
+    let userProducts = [];
+    try {
+        userProducts = await db.select().from(products).where(eq(products.userId, session.user.id)).orderBy(desc(products.createdAt));
+    } catch (error) {
+        console.error("Dashboard Data Error:", error);
+        // Fallback to empty state
+    }
 
     return (
         <div className="min-h-screen bg-[#F3F3F1] font-sans">
